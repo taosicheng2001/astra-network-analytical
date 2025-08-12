@@ -98,6 +98,10 @@ TopologyBuildingBlock NetworkParser::parse_topology_name(const std::string& topo
         return TopologyBuildingBlock::Switch;
     }
 
+    if (topology_name == "Mesh2D") {
+        return TopologyBuildingBlock::Mesh2D;
+    }
+
     // shouldn't reach here
     std::cerr << "[Error] (network/analytical) " << "Topology name " << topology_name << " not supported" << std::endl;
     std::exit(-1);
