@@ -42,6 +42,10 @@ int Topology::get_dims_count() const noexcept {
     return dims_count;
 }
 
+std::vector<std::shared_ptr<Device>> Topology::get_devices() const noexcept {
+    return devices;
+}
+
 std::vector<int> Topology::get_npus_count_per_dim() const noexcept {
     assert(npus_count_per_dim.size() == dims_count);
 

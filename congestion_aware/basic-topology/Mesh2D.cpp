@@ -5,7 +5,8 @@ LICENSE file in the root directory of this source tree.
 
 #include "congestion_aware/Mesh2D.h"
 #include <cassert>
-
+#include <cmath>
+#include <iostream>
 using namespace NetworkAnalyticalCongestionAware;
 
 Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency latency) noexcept
@@ -18,9 +19,21 @@ Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency la
     basic_topology_type = TopologyBuildingBlock::Mesh2D;
 
     // calculate the column and row size of the 2D array
-    col_size = static_cast<int>(std::sqrt(npus_count));
-    row_size = npus_count / col_size;
-
+    // Only support 32 and 64 PUs for now
+    assert(npus_count == 32 || npus_count == 64 || npus_count == 8);
+    if (npus_count == 32) {
+        col_size = 8;
+        row_size = 4;
+    } else if (npus_count == 64) {
+        col_size = 8;
+        row_size = 8;
+    } else if (npus_count == 8) {
+        col_size = 2;
+        row_size = 4;
+    } else {
+        assert(false);
+    }
+    
     assert(col_size * row_size == npus_count);
 
     // connect npus in a 2D mesh
@@ -41,6 +54,10 @@ Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
     // assert npus are in valid range
     assert(0 <= src && src < npus_count);
     assert(0 <= dest && dest < npus_count);
+
+    DeviceId Base = src - src % (col_size * row_size);
+    src = src % (col_size * row_size);
+    dest = dest % (col_size * row_size);
 
     // construct empty route
     auto route = Route();
@@ -64,7 +81,7 @@ Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
         } else {
             current_col--;
         }
-        route.push_back(devices[current_col + current_row * col_size]);
+        route.push_back(devices[Base + current_col + current_row * col_size]);
     }
 
     while(current_row != dest_row) {
@@ -73,7 +90,7 @@ Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
         } else {
             current_row--;
         }
-        route.push_back(devices[current_col + current_row * col_size]);
+        route.push_back(devices[Base + current_col + current_row * col_size]);
     }
 
     // return the constructed route

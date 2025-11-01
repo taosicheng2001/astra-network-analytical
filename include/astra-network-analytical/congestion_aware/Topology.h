@@ -77,6 +77,13 @@ class Topology {
     [[nodiscard]] int get_dims_count() const noexcept;
 
     /**
+     * Get the devices in the topology.
+     *
+     * @return devices in the topology
+     */
+    [[nodiscard]] std::vector<std::shared_ptr<Device>> get_devices() const noexcept;
+
+    /**
      * Get the number of NPUs per each dimension.
      *
      * @return number of NPUs per each dimension
@@ -89,6 +96,11 @@ class Topology {
      * @return bandwidth per each dimension
      */
     [[nodiscard]] std::vector<Bandwidth> get_bandwidth_per_dim() const noexcept;
+    
+    /**
+     * Instantiate Device objects in the topology.
+     */
+     void instantiate_devices() noexcept;
 
   protected:
     /// number of total devices in the topology
@@ -110,11 +122,6 @@ class Topology {
 
     /// bandwidth per each network dimension
     std::vector<Bandwidth> bandwidth_per_dim;
-
-    /**
-     * Instantiate Device objects in the topology.
-     */
-    void instantiate_devices() noexcept;
 
     /**
      * Connect src -> dest with the given bandwidth and latency.
