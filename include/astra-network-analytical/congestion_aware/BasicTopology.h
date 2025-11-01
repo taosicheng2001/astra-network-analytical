@@ -26,8 +26,9 @@ class BasicTopology : public Topology {
      * @param devices_count number of devices in the topology
      * @param bandwidth bandwidth of each link
      * @param latency latency of each link
+     * @param base_id base id of the topology
      */
-    BasicTopology(int npus_count, int devices_count, Bandwidth bandwidth, Latency latency) noexcept;
+    BasicTopology(int npus_count, int devices_count, Bandwidth bandwidth, Latency latency, int base_id) noexcept;
 
     /**
      * Destructor.

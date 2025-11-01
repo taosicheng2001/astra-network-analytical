@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 using namespace NetworkAnalyticalCongestionAware;
 
-Switch::Switch(const int npus_count, const Bandwidth bandwidth, const Latency latency) noexcept
-    : BasicTopology(npus_count, npus_count + 1, bandwidth, latency) {
+Switch::Switch(const int npus_count, const Bandwidth bandwidth, const Latency latency, const int base_id) noexcept
+    : BasicTopology(npus_count, npus_count + 1, bandwidth, latency, base_id) {
     // e.g., if npus_count=8, then
     // there are total 9 devices, where ordinary npus are 0-7, and switch is 8
     assert(npus_count > 0);

@@ -30,7 +30,7 @@ class Topology {
     /**
      * Constructor.
      */
-    Topology() noexcept;
+    Topology(int base_id) noexcept;
 
     /**
      * Construct the route from src to dest.
@@ -69,6 +69,10 @@ class Topology {
      */
     [[nodiscard]] int get_devices_count() const noexcept;
 
+
+
+    [[nodiscard]] bool contains_device(DeviceId device_id) const noexcept;
+    
     /**
      * Get the number of network dimensions.
      *
@@ -102,6 +106,14 @@ class Topology {
      */
      void instantiate_devices() noexcept;
 
+    /**
+     * Get the device by device id.
+     *
+     * @param device_id device id
+     * @return device
+     */
+    [[nodiscard]] std::shared_ptr<Device> get_device(DeviceId device_id) const noexcept;
+
   protected:
     /// number of total devices in the topology
     /// device includes non-NPU devices such as switches
@@ -122,6 +134,8 @@ class Topology {
 
     /// bandwidth per each network dimension
     std::vector<Bandwidth> bandwidth_per_dim;
+
+    int base_id;
 
     /**
      * Connect src -> dest with the given bandwidth and latency.

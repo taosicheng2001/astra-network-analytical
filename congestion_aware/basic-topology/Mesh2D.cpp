@@ -9,8 +9,8 @@ LICENSE file in the root directory of this source tree.
 #include <iostream>
 using namespace NetworkAnalyticalCongestionAware;
 
-Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency latency) noexcept
-    : BasicTopology(npus_count, npus_count, bandwidth, latency) {
+Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency latency, const int base_id) noexcept
+    : BasicTopology(npus_count, npus_count, bandwidth, latency, base_id) {
     assert(npus_count > 0);
     assert(bandwidth > 0);
     assert(latency >= 0);
@@ -51,25 +51,23 @@ Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency la
 }
 
 Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
-    // assert npus are in valid range
-    assert(0 <= src && src < npus_count);
-    assert(0 <= dest && dest < npus_count);
+    assert(contains_device(src));
+    assert(contains_device(dest));
 
-    DeviceId Base = src - src % (col_size * row_size);
-    src = src % (col_size * row_size);
-    dest = dest % (col_size * row_size);
+    auto local_src = src - base_id;
+    auto local_dest = dest - base_id;
 
     // construct empty route
     auto route = Route();
 
     // 1. Add the source to the route
-    route.push_back(devices[src]);
+    route.push_back(devices[local_src]);
 
     // 2. Find the coordinates of src and dest
-    auto src_col = src % col_size;
-    auto src_row = src / col_size;
-    auto dest_col = dest % col_size;
-    auto dest_row = dest / col_size;
+    auto src_col = local_src % col_size;
+    auto src_row = local_src / col_size;
+    auto dest_col = local_dest % col_size;
+    auto dest_row = local_dest / col_size;
 
     // 3. Find the route
     auto current_col = src_col;
@@ -81,7 +79,7 @@ Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
         } else {
             current_col--;
         }
-        route.push_back(devices[Base + current_col + current_row * col_size]);
+        route.push_back(devices[current_col + current_row * col_size]);
     }
 
     while(current_row != dest_row) {
@@ -90,7 +88,7 @@ Route Mesh2D::route(DeviceId src, DeviceId dest) const noexcept {
         } else {
             current_row--;
         }
-        route.push_back(devices[Base + current_col + current_row * col_size]);
+        route.push_back(devices[current_col + current_row * col_size]);
     }
 
     // return the constructed route

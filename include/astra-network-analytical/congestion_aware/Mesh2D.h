@@ -35,8 +35,9 @@ class Mesh2D final : public BasicTopology {
      * @param npus_count number of npus in a ring
      * @param bandwidth bandwidth of link
      * @param latency latency of link
+     * @param base_id base id of the topology
      */
-    Mesh2D(int npus_count, Bandwidth bandwidth, Latency latency) noexcept;
+    Mesh2D(int npus_count, Bandwidth bandwidth, Latency latency, const int base_id) noexcept;
 
     /**
      * Implementation of route function in Topology.

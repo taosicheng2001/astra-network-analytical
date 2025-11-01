@@ -7,38 +7,28 @@ LICENSE file in the root directory of this source tree.
 
 #include "common/Type.h"
 #include "congestion_aware/BasicTopology.h"
-#include <cassert>
 
 using namespace NetworkAnalytical;
 
 namespace NetworkAnalyticalCongestionAware {
 
 /**
- * Implements a switch topology.
- *
- * Switch(4) example:
- * <-switch->
- * |  |  |  |
- * 0  1  2  3
- *
- * Therefore, the number of NPUs is 4 (excluding the switch),
- * and the number of devices is 5 (including the switch).
- *
- * For example, send(0 -> 2) flows through:
- * 0 -> switch -> 2
- * so takes 2 hops.
+ * Implements a tree topology.
+
  */
-class Switch final : public BasicTopology {
+
+class Tree final : public BasicTopology {
   public:
     /**
      * Constructor.
      *
-     * @param npus_count number of npus connected to the switch
+     * @param npus_count number of npus in a tree
      * @param bandwidth bandwidth of link
      * @param latency latency of link
+     * @param bidirectional true if tree is bidirectional, false otherwise
      * @param base_id base id of the topology
      */
-    Switch(int npus_count, Bandwidth bandwidth, Latency latency, const int base_id) noexcept;
+    Tree(int npus_count, Bandwidth bandwidth, Latency latency, const int base_id=0) noexcept;
 
     /**
      * Implementation of route function in Topology.
@@ -46,8 +36,17 @@ class Switch final : public BasicTopology {
     [[nodiscard]] Route route(DeviceId src, DeviceId dest) const noexcept override;
 
   private:
-    /// node_id of the switch node
-    DeviceId switch_id;
+    /// true if the tree is bidirectional, false otherwise
+    bool bidirectional;
+    int height=4;
+
+    std::vector<int> level_counts = {1, 4, 2, 2};
+    std::vector<double> level_bandwidths = {25.0, 50.0, 100.0, 200.0};
+    std::vector<double> level_latencies = {2000.0, 1000.0, 500.0, 200.0};
+
+    std::vector<int> father_map = {
+      -1,0,0,0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12
+    };
 };
 
 }  // namespace NetworkAnalyticalCongestionAware

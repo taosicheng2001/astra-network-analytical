@@ -30,7 +30,7 @@ class MultiDimTopology : public Topology {
      *
      * @param topology BasicTopology instance to be added.
      */
-    void append_dimension(std::unique_ptr<BasicTopology> basic_topology) noexcept;
+    void append_dimension(std::vector<std::unique_ptr<BasicTopology>> topologies) noexcept;
 
     /**
      * Route a chunk from src to dest.
@@ -55,7 +55,7 @@ class MultiDimTopology : public Topology {
     using MultiDimAddress = std::vector<DeviceId>;
 
     /// BasicTopology instances per dimension.
-    std::vector<std::unique_ptr<BasicTopology>> topology_per_dim;
+    std::vector<std::vector<std::unique_ptr<BasicTopology>>> topology_per_dim;
 
     /**
      * Translate the NPU ID into a multi-dimensional address.

@@ -25,7 +25,7 @@ class Device {
      *
      * @param id id of the device
      */
-    explicit Device(DeviceId id) noexcept;
+    explicit Device(DeviceId id, DeviceId group_base_id=0) noexcept;
 
     /**
      * Get id of the device.
@@ -54,6 +54,7 @@ class Device {
   private:
     /// device Id
     DeviceId device_id;
+    DeviceId GroupBaseId;
 
     /// links to other nodes
     /// map[dest node node_id] -> link

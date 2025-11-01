@@ -8,8 +8,8 @@ LICENSE file in the root directory of this source tree.
 
 using namespace NetworkAnalyticalCongestionAware;
 
-FullyConnected::FullyConnected(const int npus_count, const Bandwidth bandwidth, const Latency latency) noexcept
-    : BasicTopology(npus_count, npus_count, bandwidth, latency) {
+FullyConnected::FullyConnected(const int npus_count, const Bandwidth bandwidth, const Latency latency, const int base_id) noexcept
+    : BasicTopology(npus_count, npus_count, bandwidth, latency, base_id) {
     assert(npus_count > 0);
     assert(bandwidth > 0);
     assert(latency >= 0);

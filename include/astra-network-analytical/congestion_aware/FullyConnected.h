@@ -32,8 +32,9 @@ class FullyConnected final : public BasicTopology {
      * @param npus_count number of npus in the FullyConnected topology
      * @param bandwidth bandwidth of each link
      * @param latency latency of each link
+     * @param base_id base id of the topology
      */
-    FullyConnected(int npus_count, Bandwidth bandwidth, Latency latency) noexcept;
+    FullyConnected(int npus_count, Bandwidth bandwidth, Latency latency, const int base_id) noexcept;
 
     /**
      * Implementation of route function in Topology.

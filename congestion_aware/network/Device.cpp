@@ -11,7 +11,7 @@ LICENSE file in the root directory of this source tree.
 
 using namespace NetworkAnalyticalCongestionAware;
 
-Device::Device(const DeviceId id) noexcept : device_id(id) {
+Device::Device(const DeviceId id, const DeviceId group_base_id) noexcept : device_id(id), GroupBaseId(group_base_id) {
     assert(id >= 0);
 }
 
