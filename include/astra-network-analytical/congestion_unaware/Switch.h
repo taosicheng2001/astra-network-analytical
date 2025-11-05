@@ -42,4 +42,41 @@ class Switch final : public BasicTopology {
     [[nodiscard]] int compute_hops_count(DeviceId src, DeviceId dest) const noexcept override;
 };
 
+class L2Switch final : public BasicTopology {
+  public:
+    /**
+     * Constructor.
+     *
+     * @param npus_count number of NPUs in the Switch
+     * @param bandwidth bandwidth of each link
+     * @param latency latency of each link
+     */
+    L2Switch(int npus_count, Bandwidth bandwidth, Latency latency) noexcept;
+
+  private:
+    /**
+     * Implements the compute_hops_count method of BasicTopology.
+     */
+    [[nodiscard]] int compute_hops_count(DeviceId src, DeviceId dest) const noexcept override;
+};
+
+class L1Switch final : public BasicTopology {
+  public:
+    /**
+     * Constructor.
+     *
+     * @param npus_count number of NPUs in the Switch
+     * @param bandwidth bandwidth of each link
+     * @param latency latency of each link
+     */
+    L1Switch(int npus_count, Bandwidth bandwidth, Latency latency) noexcept;
+
+  private:
+    /**
+     * Implements the compute_hops_count method of BasicTopology.
+     */
+    [[nodiscard]] int compute_hops_count(DeviceId src, DeviceId dest) const noexcept override;
+};
+
+
 }  // namespace NetworkAnalyticalCongestionUnaware

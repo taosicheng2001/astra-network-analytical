@@ -11,6 +11,7 @@ LICENSE file in the root directory of this source tree.
 using namespace NetworkAnalytical;
 using namespace NetworkAnalyticalCongestionUnaware;
 
+
 MultiDimTopology::MultiDimTopology() noexcept : Topology() {
     // initialize values
     topology_per_dim.clear();

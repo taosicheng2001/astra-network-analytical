@@ -9,6 +9,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_unaware/MultiDimTopology.h"
 #include "congestion_unaware/Ring.h"
 #include "congestion_unaware/Switch.h"
+#include "congestion_unaware/Mesh1D.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -38,8 +39,14 @@ std::shared_ptr<Topology> NetworkAnalyticalCongestionUnaware::construct_topology
             return std::make_shared<Ring>(npus_count, bandwidth, latency);
         case TopologyBuildingBlock::Switch:
             return std::make_shared<Switch>(npus_count, bandwidth, latency);
+        case TopologyBuildingBlock::L2Switch:
+            return std::make_shared<L2Switch>(npus_count, bandwidth, latency);
+        case TopologyBuildingBlock::L1Switch:
+            return std::make_shared<L1Switch>(npus_count, bandwidth, latency);
         case TopologyBuildingBlock::FullyConnected:
             return std::make_shared<FullyConnected>(npus_count, bandwidth, latency);
+        case TopologyBuildingBlock::Mesh1D:
+            return std::make_shared<Mesh1D>(npus_count, bandwidth, latency);
         default:
             // shouldn't reach here
             std::cerr << "[Error] (network/analytical/congestion_unaware)" << "Not supported topology" << std::endl;
@@ -67,8 +74,17 @@ std::shared_ptr<Topology> NetworkAnalyticalCongestionUnaware::construct_topology
         case TopologyBuildingBlock::Switch:
             dim_topology = std::make_unique<Switch>(npus_count, bandwidth, latency);
             break;
+        case TopologyBuildingBlock::L2Switch:
+            dim_topology = std::make_unique<L2Switch>(npus_count, bandwidth, latency);
+            break;
+        case TopologyBuildingBlock::L1Switch:
+            dim_topology = std::make_unique<L1Switch>(npus_count, bandwidth, latency);
+            break;
         case TopologyBuildingBlock::FullyConnected:
             dim_topology = std::make_unique<FullyConnected>(npus_count, bandwidth, latency);
+            break;
+        case TopologyBuildingBlock::Mesh1D:
+            dim_topology = std::make_unique<Mesh1D>(npus_count, bandwidth, latency);
             break;
         default:
             // shouldn't reach here

@@ -106,6 +106,22 @@ TopologyBuildingBlock NetworkParser::parse_topology_name(const std::string& topo
         return TopologyBuildingBlock::Tree;
     }
 
+    if (topology_name == "Mesh1D") {
+        return TopologyBuildingBlock::Mesh1D;
+    }
+
+    if (topology_name == "CloudMatrix384") {
+        return TopologyBuildingBlock::CloudMatrix384;
+    }
+
+    if (topology_name == "L2Switch") {
+        return TopologyBuildingBlock::L2Switch;
+    }
+
+    if (topology_name == "L1Switch") {
+        return TopologyBuildingBlock::L1Switch;
+    }
+
     // shouldn't reach here
     std::cerr << "[Error] (network/analytical) " << "Topology name " << topology_name << " not supported" << std::endl;
     std::exit(-1);
