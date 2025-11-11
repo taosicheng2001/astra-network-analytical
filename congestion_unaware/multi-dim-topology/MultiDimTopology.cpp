@@ -99,7 +99,7 @@ MultiDimTopology::MultiDimAddress MultiDimTopology::translate_address(const Devi
 
 int MultiDimTopology::get_dim_to_transfer(const MultiDimAddress& src_address,
                                           const MultiDimAddress& dest_address) const noexcept {
-    for (auto dim = 0; dim < dims_count; dim++) {
+    for (auto dim = dims_count - 1; dim >= 0; dim--) {
         // check the dim that has different address
         if (src_address[dim] != dest_address[dim]) {
             return dim;
