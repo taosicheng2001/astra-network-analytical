@@ -31,6 +31,6 @@ using Latency = double;
 using EventTime = uint64_t;
 
 /// Basic multi-dimensional topology building blocks
-enum class TopologyBuildingBlock { Undefined, Ring, FullyConnected, Switch, L2Switch, L1Switch, Mesh2D, Mesh1D, Tree, CloudMatrix384 };
+enum class TopologyBuildingBlock { Undefined, Ring, FullyConnected, Switch, L2Switch, L1Switch, Mesh2D, Mesh1D, Tree, CloudMatrix384, SpinalSwitch, VirtualSwitch };
 
 }  // namespace NetworkAnalytical

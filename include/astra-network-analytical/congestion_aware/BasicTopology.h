@@ -43,6 +43,10 @@ class BasicTopology : public Topology {
      */
     [[nodiscard]] TopologyBuildingBlock get_basic_topology_type() const noexcept;
 
+    Bandwidth get_bandwidth() const noexcept;
+
+    Latency get_latency() const noexcept;
+
   protected:
     /// bandwidth of each link
     Bandwidth bandwidth;

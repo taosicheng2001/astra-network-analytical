@@ -21,7 +21,7 @@ Topology::Topology(int base_id) noexcept : npus_count(-1), devices_count(-1), di
 }
 
 int Topology::get_devices_count() const noexcept {
-    assert(devices_count > 0);
+    assert(devices_count >= 0);
     assert(npus_count >= 0);
     assert(devices_count >= npus_count);
 
@@ -38,7 +38,7 @@ bool Topology::contains_device(DeviceId device_id) const noexcept {
 }
 
 int Topology::get_npus_count() const noexcept {
-    assert(devices_count > 0);
+    assert(devices_count >= 0);
     assert(npus_count >= 0);
     assert(devices_count >= npus_count);
 

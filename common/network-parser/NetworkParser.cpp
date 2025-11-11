@@ -122,6 +122,18 @@ TopologyBuildingBlock NetworkParser::parse_topology_name(const std::string& topo
         return TopologyBuildingBlock::L1Switch;
     }
 
+    if (topology_name == "VirtualSwitch") {
+        return TopologyBuildingBlock::VirtualSwitch;
+    }
+
+    if (topology_name == "SpinalSwitch") {
+        return TopologyBuildingBlock::SpinalSwitch;
+    }
+
+    if (topology_name == "Mesh1D") {
+        return TopologyBuildingBlock::Mesh1D;
+    }
+
     // shouldn't reach here
     std::cerr << "[Error] (network/analytical) " << "Topology name " << topology_name << " not supported" << std::endl;
     std::exit(-1);

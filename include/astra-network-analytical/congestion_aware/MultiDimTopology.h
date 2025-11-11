@@ -42,11 +42,8 @@ class MultiDimTopology : public Topology {
     [[nodiscard]] Route route(DeviceId src, DeviceId dest) const noexcept;
     
     void connect_dimensions(const int dim1, const int dim2) noexcept;
-
-    /**
-    * Add switches to the multi-dimensional topology.
-    */
-    void addSwitches() noexcept;
+  
+    std::map<int, int> device_2_father_device_map;
 
   private:
     /// Each NPU ID can be broken down into multiple dimensions.
@@ -77,7 +74,7 @@ class MultiDimTopology : public Topology {
     [[nodiscard]] int get_dim_to_transfer(const MultiDimAddress& src_address,
                                           const MultiDimAddress& dest_address) const noexcept;
 
-
+    int leaf_nodes_count;
 
 };
 

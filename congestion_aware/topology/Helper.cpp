@@ -10,6 +10,9 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Switch.h"
 #include "congestion_aware/Mesh2D.h"
 #include "congestion_aware/Tree.h"
+#include "congestion_aware/Mesh1D.h"
+#include "congestion_aware/VirtualSwitch.h"
+#include "congestion_aware/SpinalSwitch.h"
 #include <cstdlib>
 #include <iostream>
 
@@ -61,30 +64,25 @@ std::shared_ptr<Topology> NetworkAnalyticalCongestionAware::construct_topology(
         const auto bandwidth = bandwidths_per_dim[dim];
         const auto latency = latencies_per_dim[dim];
         
+        // calculate the number of topo instances in the current dimension
         auto nodes_count = 1;
         for(auto i = dim+1; i < dims_count; i++) {
             nodes_count *= npus_counts_per_dim[i];
         }
+
         std::vector<std::unique_ptr<BasicTopology>> subnet_topologies;
         for (auto i = 0; i<nodes_count; i++) {
             // create a subnet topology
             std::unique_ptr<BasicTopology> subnet_topology;
             switch (topology_type) {
-            case TopologyBuildingBlock::Ring:
-                subnet_topology = std::make_unique<Ring>(npus_count, bandwidth, latency, current_device_count);
+            case TopologyBuildingBlock::Mesh1D:
+                subnet_topology = std::make_unique<Mesh1D>(npus_count, bandwidth, latency, current_device_count);
                 break;
-            case TopologyBuildingBlock::Switch:
-                subnet_topology = std::make_unique<Switch>(npus_count, bandwidth, latency, current_device_count);
+            case TopologyBuildingBlock::VirtualSwitch:
+                subnet_topology = std::make_unique<VirtualSwitch>(npus_count, bandwidth, latency, current_device_count);
                 break;
-            break;
-            case TopologyBuildingBlock::FullyConnected:
-                subnet_topology = std::make_unique<FullyConnected>(npus_count, bandwidth, latency, current_device_count);
-                break;
-            case TopologyBuildingBlock::Mesh2D:
-                subnet_topology = std::make_unique<Mesh2D>(npus_count, bandwidth, latency, current_device_count);
-                break;
-            case TopologyBuildingBlock::Tree:
-                subnet_topology = std::make_unique<Tree>(29, 10, 10, current_device_count);
+            case TopologyBuildingBlock::SpinalSwitch:
+                subnet_topology = std::make_unique<SpinalSwitch>(npus_count, bandwidth, latency, current_device_count);
                 break;
             default:
                 // shouldn't reach here

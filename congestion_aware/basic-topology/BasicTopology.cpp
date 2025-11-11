@@ -18,7 +18,7 @@ BasicTopology::BasicTopology(const int npus_count,
       basic_topology_type(TopologyBuildingBlock::Undefined),
       Topology(base_id) {
     assert(npus_count >= 0);
-    assert(devices_count > 0);
+    assert(devices_count >= 0);
     assert(devices_count >= npus_count);
     assert(bandwidth > 0);
     assert(latency >= 0);
@@ -31,7 +31,9 @@ BasicTopology::BasicTopology(const int npus_count,
     bandwidth_per_dim.push_back(bandwidth);
 
     // instantiate devices
-    instantiate_devices();
+    if (devices_count > 0) {
+        instantiate_devices();
+    }
 }
 
 // default destructor
@@ -41,4 +43,12 @@ TopologyBuildingBlock BasicTopology::get_basic_topology_type() const noexcept {
     assert(basic_topology_type != TopologyBuildingBlock::Undefined);
 
     return basic_topology_type;
+}
+
+Bandwidth BasicTopology::get_bandwidth() const noexcept {
+  return bandwidth;
+}
+
+Latency BasicTopology::get_latency() const noexcept {
+  return latency;
 }
