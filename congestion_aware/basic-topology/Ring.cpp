@@ -17,7 +17,7 @@ Ring::Ring(const int npus_count, const Bandwidth bandwidth, const Latency latenc
 
     // connect npus in a ring
     for (auto i = 0; i < npus_count - 1; i++) {
-        connect(i, i + 1, bandwidth, latency, bidirectional);
+        connect(i, i + 1, bandwidth, latency, bidirectional, false);
     }
     connect(npus_count - 1, 0, bandwidth, latency, bidirectional);
 }

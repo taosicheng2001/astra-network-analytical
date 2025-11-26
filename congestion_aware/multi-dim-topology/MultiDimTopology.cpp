@@ -21,6 +21,7 @@ MultiDimTopology::MultiDimTopology() noexcept : Topology(0) {
     npus_count = 0;
     devices_count = 0;
     dims_count = 0;
+    real_swtich_count = 0;
 }
 
 void MultiDimTopology::append_dimension(std::vector<std::unique_ptr<BasicTopology>> topologies) noexcept {
@@ -122,8 +123,8 @@ void MultiDimTopology::connect_dimensions(const int dim1, const int dim2) noexce
         // connect npu devices to switches
         auto cur_devices = cur_topo->get_devices();
         for (auto& cur_device : cur_devices) {
-            cur_device->connect(spinal_switches[spinal_switch_index]->get_id(), virtual_bandwidth, virtual_latency);
-            spinal_switches[spinal_switch_index]->connect(cur_device->get_id(), virtual_bandwidth, virtual_latency);
+            cur_device->connect(spinal_switches[spinal_switch_index]->get_id(), virtual_bandwidth, virtual_latency, false);
+            spinal_switches[spinal_switch_index]->connect(cur_device->get_id(), virtual_bandwidth, virtual_latency, false);
             device_2_father_device_map[cur_device->get_id()] = spinal_switches[spinal_switch_index]->get_id();
             leaf_node_index++;
             if (leaf_node_index == 2*leaf_nodes_count) {
@@ -163,7 +164,7 @@ Route MultiDimTopology::route(DeviceId src, DeviceId dest) const noexcept {
         else {
             route.push_back(get_device(src));
             route.push_back(get_device(src_father_device_id));
-            route.push_back(get_device(816));
+            route.push_back(get_device(real_swtich_count+npu_counts));
             route.push_back(get_device(dest_father_device_id));
             route.push_back(get_device(dest));        
         }

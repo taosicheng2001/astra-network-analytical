@@ -26,7 +26,7 @@ Mesh1D::Mesh1D(const int npus_count, const Bandwidth bandwidth, const Latency la
     // connect npus in a 1D mesh
     for (auto i = 0; i < npus_count; i++) {
         if (i + 1 < npus_count) {
-            connect(i, i + 1, bandwidth, latency, true);
+            connect(i, i + 1, bandwidth, latency, true, false);
         }
     }
 }

@@ -28,7 +28,7 @@ Tree::Tree(const int npus_count, const Bandwidth bandwidth, const Latency latenc
       next_npus_count = current_npus_count + current_level_npus_count;
       for (auto j = 0; j < current_level_npus_count; j++) {
         for (auto k = 0; k < level_counts[i+1]; k++) {
-          connect(current_npus_count, next_npus_count++, level_bandwidths[i], level_latencies[i], true);
+          connect(current_npus_count, next_npus_count++, level_bandwidths[i], level_latencies[i], true, false);
         }
         current_npus_count++;
       }

@@ -148,8 +148,9 @@ class Topology {
      * @param bandwidth bandwidth of link
      * @param latency latency of link
      * @param bidirectional true if connection is bidirectional, false otherwise
+     * @param non_blocking flag to indicate if the link is non-blocking
      */
-    void connect(DeviceId src, DeviceId dest, Bandwidth bandwidth, Latency latency, bool bidirectional = true) noexcept;
+    void connect(DeviceId src, DeviceId dest, Bandwidth bandwidth, Latency latency, bool bidirectional = true, bool non_blocking = false) noexcept;
 };
 
 }  // namespace NetworkAnalyticalCongestionAware

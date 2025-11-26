@@ -40,8 +40,9 @@ class Link {
      *
      * @param bandwidth bandwidth of the link
      * @param latency latency of the link
+     * @param non_blocking flag to indicate if the link is non-blocking
      */
-    Link(Bandwidth bandwidth, Latency latency) noexcept;
+    Link(Bandwidth bandwidth, Latency latency, bool non_blocking) noexcept;
 
     /**
      * Try to send a chunk through the link.
@@ -74,10 +75,10 @@ class Link {
      * Set the link as free.
      */
     void set_free() noexcept;
-
-  private:
+    
     /// event queue Link uses to schedule events
     static std::shared_ptr<EventQueue> event_queue;
+  private:
 
     /// bandwidth of the link in GB/s
     Bandwidth bandwidth;
@@ -94,6 +95,9 @@ class Link {
     /// flag to indicate if the link is busy
     bool busy;
 
+    /// flag to indicate if the link is non-blocking
+    bool non_blocking;
+
     /**
      * Compute the serialization delay of a chunk on the link.
      * i.e., serialization delay = (chunk size) / (link bandwidth)
@@ -101,7 +105,7 @@ class Link {
      * @param chunk_size size of the target chunk
      * @return serialization delay of the chunk
      */
-    [[nodiscard]] EventTime serialization_delay(ChunkSize chunk_size) const noexcept;
+    [[nodiscard]] EventTime serialization_delay(ChunkSize chunk_size, double last_bpns) const noexcept;
 
     /**
      * Compute the communication delay of a chunk.
@@ -110,7 +114,7 @@ class Link {
      * @param chunk_size size of the target chunk
      * @return communication delay of the chunk
      */
-    [[nodiscard]] EventTime communication_delay(ChunkSize chunk_size) const noexcept;
+    [[nodiscard]] EventTime communication_delay(ChunkSize chunk_size, double last_bpns) const noexcept;
 
     /**
      * Schedule the transmission of a chunk.

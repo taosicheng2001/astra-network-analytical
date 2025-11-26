@@ -36,7 +36,7 @@ SpinalSwitch::SpinalSwitch(const int leaf_nodes_count, const Bandwidth bandwidth
 
     // connect npus and switches, the link should be bidirectional
     for (auto i = 0; i < leaf_nodes_count; i++) {
-        connect(i, spinal_switch_id, bandwidth, latency, true);
+        connect(i, spinal_switch_id, bandwidth, latency, true, true);
     }
 }
 

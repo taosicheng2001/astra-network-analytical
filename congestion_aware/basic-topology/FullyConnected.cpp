@@ -21,7 +21,7 @@ FullyConnected::FullyConnected(const int npus_count, const Bandwidth bandwidth, 
     for (auto src = 0; src < npus_count; src++) {
         for (auto dest = 0; dest < npus_count; dest++) {
             if (src != dest) {
-                connect(src, dest, bandwidth, latency, false);
+                connect(src, dest, bandwidth, latency, false, false);
             }
         }
     }

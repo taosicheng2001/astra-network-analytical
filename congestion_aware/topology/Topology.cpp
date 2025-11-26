@@ -93,7 +93,8 @@ void Topology::connect(const DeviceId src,
                        const DeviceId dest,
                        const Bandwidth bandwidth,
                        const Latency latency,
-                       const bool bidirectional) noexcept {
+                       const bool bidirectional,
+                       const bool non_blocking) noexcept {
     // assert the src and dest are valid
     auto global_src = src + base_id;
     auto global_dest = dest + base_id;
@@ -103,11 +104,11 @@ void Topology::connect(const DeviceId src,
     assert(latency >= 0);
 
     // connect src -> dest
-    devices[src]->connect(global_dest, bandwidth, latency);
+    devices[src]->connect(global_dest, bandwidth, latency, non_blocking);
 
     // if bidirectional, connect dest -> src
     if (bidirectional) {
-        devices[dest]->connect(global_src, bandwidth, latency);
+        devices[dest]->connect(global_src, bandwidth, latency, non_blocking);
     }
 }
 

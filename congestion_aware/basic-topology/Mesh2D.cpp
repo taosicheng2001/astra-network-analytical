@@ -20,7 +20,6 @@ Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency la
 
     // calculate the column and row size of the 2D array
     // Only support 32 and 64 PUs for now
-    assert(npus_count == 32 || npus_count == 64 || npus_count == 8);
     if (npus_count == 32) {
         col_size = 8;
         row_size = 4;
@@ -30,6 +29,9 @@ Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency la
     } else if (npus_count == 8) {
         col_size = 2;
         row_size = 4;
+    } else if (npus_count == 768) {
+        col_size = 24;
+        row_size = 32;
     } else {
         assert(false);
     }
@@ -42,10 +44,10 @@ Mesh2D::Mesh2D(const int npus_count, const Bandwidth bandwidth, const Latency la
         auto y = i / col_size; 
 
         if (x + 1 < col_size) {
-            connect(i, i + 1, bandwidth, latency, true);
+            connect(i, i + 1, bandwidth, latency, true, false);
         }
         if (y + 1 < row_size) {
-            connect(i, i + col_size, bandwidth, latency, true);
+            connect(i, i + col_size, bandwidth, latency, true, false);
         }
     }
 }

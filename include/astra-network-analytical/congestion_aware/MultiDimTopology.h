@@ -44,6 +44,8 @@ class MultiDimTopology : public Topology {
     void connect_dimensions(const int dim1, const int dim2) noexcept;
   
     std::map<int, int> device_2_father_device_map;
+    int npu_counts;
+    int real_swtich_count;
 
   private:
     /// Each NPU ID can be broken down into multiple dimensions.

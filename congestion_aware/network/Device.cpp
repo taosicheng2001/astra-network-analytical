@@ -33,6 +33,7 @@ void Device::send(std::unique_ptr<Chunk> chunk) noexcept {
 
     // get next dest
     const auto next_dest = chunk->next_device();
+    assert(next_dest != nullptr);
     const auto next_dest_id = next_dest->get_id();
 
     // assert the next dest is connected to this node
@@ -43,7 +44,7 @@ void Device::send(std::unique_ptr<Chunk> chunk) noexcept {
     links[next_dest_id]->send(std::move(chunk));
 }
 
-void Device::connect(const DeviceId id, const Bandwidth bandwidth, const Latency latency) noexcept {
+void Device::connect(const DeviceId id, const Bandwidth bandwidth, const Latency latency, const bool non_blocking) noexcept {
     assert(id >= 0);
     assert(bandwidth > 0);
     assert(latency >= 0);
@@ -52,7 +53,7 @@ void Device::connect(const DeviceId id, const Bandwidth bandwidth, const Latency
     assert(!connected(id));
 
     // create link
-    links[id] = std::make_shared<Link>(bandwidth, latency);
+    links[id] = std::make_shared<Link>(bandwidth, latency, non_blocking);
 }
 
 bool Device::connected(const DeviceId dest) const noexcept {

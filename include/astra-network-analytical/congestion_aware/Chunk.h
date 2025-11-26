@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include "common/Type.h"
 #include "congestion_aware/Type.h"
 #include <memory>
+#include <fstream>
 
 using namespace NetworkAnalytical;
 
@@ -32,11 +33,12 @@ class Chunk {
      * Constructor.
      *
      * @param chunk_size: size of the chunk
+     * @param chunk_id: id of the chunk
      * @param route: route of the chunk from its source to destination
      * @param callback: callback to be invoked when the chunk arrives destination
      * @param callback_arg: argument of the callback
      */
-    Chunk(ChunkSize chunk_size, Route route, Callback callback, CallbackArg callback_arg) noexcept;
+    Chunk(ChunkSize chunk_size, int chunk_id, Route route, Callback callback, CallbackArg callback_arg) noexcept;
 
     /**
      * Get the current sitting device of the chunk
@@ -67,6 +69,13 @@ class Chunk {
     [[nodiscard]] bool arrived_dest() const noexcept;
 
     /**
+     * Check if the chunk is at its source
+     *
+     * @return true if the chunk is at its source, false otherwise
+     */
+    [[nodiscard]] bool at_src() const noexcept;
+
+    /**
      * Get the size of the chunk
      *
      * @return size of the chunk
@@ -79,9 +88,19 @@ class Chunk {
      */
     void invoke_callback() noexcept;
 
-  private:
+    void dump_info() noexcept;
+    
+    int stall_count;
+    EventTime stall_times;
+    EventTime stall_time_begin;
+    double last_bpns;
+    DeviceId src_device_id;
+    DeviceId dst_device_id; 
+    
+    private:
     /// size of the chunk
     ChunkSize chunk_size;
+    int chunk_id;
 
     /// route of the chunk to its destination.
     /// Route has the structure of [current device, next device, ..., dest device]
@@ -94,6 +113,12 @@ class Chunk {
 
     /// argument of the callback
     CallbackArg callback_arg;
+
+    EventTime sent_time;
+    EventTime arrival_time;
 };
 
 }  // namespace NetworkAnalyticalCongestionAware
+
+// 全局输出流变量
+extern std::ofstream& eventTrackerFileStream;

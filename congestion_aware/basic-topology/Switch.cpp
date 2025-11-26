@@ -21,7 +21,7 @@ Switch::Switch(const int npus_count, const Bandwidth bandwidth, const Latency la
 
     // connect npus and switches, the link should be bidirectional
     for (auto i = 0; i < npus_count; i++) {
-        connect(i, switch_id, bandwidth, latency, true);
+        connect(i, switch_id, bandwidth, latency, true, false);
     }
 }
 

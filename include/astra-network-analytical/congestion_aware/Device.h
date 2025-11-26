@@ -48,8 +48,9 @@ class Device {
      * @param id id of the device to connect this device to
      * @param bandwidth bandwidth of the link
      * @param latency latency of the link
+     * @param non_blocking flag to indicate if the link is non-blocking
      */
-    void connect(DeviceId id, Bandwidth bandwidth, Latency latency) noexcept;
+    void connect(DeviceId id, Bandwidth bandwidth, Latency latency, bool non_blocking) noexcept;
 
   private:
     /// device Id

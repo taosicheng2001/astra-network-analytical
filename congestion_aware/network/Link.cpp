@@ -8,6 +8,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Chunk.h"
 #include "congestion_aware/Device.h"
 #include <cassert>
+#include <iostream>
 
 using namespace NetworkAnalytical;
 using namespace NetworkAnalyticalCongestionAware;
@@ -37,9 +38,10 @@ void Link::set_event_queue(std::shared_ptr<EventQueue> event_queue_ptr) noexcept
     Link::event_queue = std::move(event_queue_ptr);
 }
 
-Link::Link(const Bandwidth bandwidth, const Latency latency) noexcept
+Link::Link(const Bandwidth bandwidth, const Latency latency, const bool non_blocking) noexcept
     : bandwidth(bandwidth),
       latency(latency),
+      non_blocking(non_blocking),
       pending_chunks(),
       busy(false) {
     assert(bandwidth > 0);
@@ -54,6 +56,8 @@ void Link::send(std::unique_ptr<Chunk> chunk) noexcept {
 
     if (busy) {
         // link is busy, add to pending chunks
+        chunk->stall_count++;
+        chunk->stall_time_begin = Link::event_queue->get_current_time();
         pending_chunks.push_back(std::move(chunk));
     } else {
         // service this chunk immediately
@@ -67,6 +71,7 @@ void Link::process_pending_transmission() noexcept {
 
     // get chunk to process
     auto chunk = std::move(pending_chunks.front());
+    chunk->stall_times += (Link::event_queue->get_current_time() - chunk->stall_time_begin);
     pending_chunks.pop_front();
 
     // service this chunk
@@ -88,17 +93,21 @@ void Link::set_free() noexcept {
     busy = false;
 }
 
-EventTime Link::serialization_delay(const ChunkSize chunk_size) const noexcept {
+EventTime Link::serialization_delay(const ChunkSize chunk_size, const double last_bpns) const noexcept {
     assert(chunk_size > 0);
 
     // calculate serialization delay
-    const auto delay = static_cast<Bandwidth>(chunk_size) / bandwidth_Bpns;
+    if (last_bpns <= bandwidth_Bpns) {
+        return static_cast<EventTime>(0);
+    }
+
+    const auto delay = static_cast<Bandwidth>(chunk_size) * ( 1 / bandwidth_Bpns - 1 / last_bpns);
 
     // return serialization delay in EventTime type
     return static_cast<EventTime>(delay);
 }
 
-EventTime Link::communication_delay(const ChunkSize chunk_size) const noexcept {
+EventTime Link::communication_delay(const ChunkSize chunk_size, const double last_bpns) const noexcept {
     assert(chunk_size > 0);
 
     // calculate communication delay
@@ -115,21 +124,29 @@ void Link::schedule_chunk_transmission(std::unique_ptr<Chunk> chunk) noexcept {
     assert(!busy);
 
     // set link busy
-    set_busy();
+    if (!non_blocking)
+        set_busy();
 
     // get metadata
     const auto chunk_size = chunk->get_size();
     const auto current_time = Link::event_queue->get_current_time();
 
+    const auto last_bpns = chunk->last_bpns;
+    chunk->last_bpns = bandwidth_Bpns;
+
     // schedule chunk arrival event
-    const auto communication_time = communication_delay(chunk_size);
-    const auto chunk_arrival_time = current_time + communication_time;
+    const auto serialization_time = serialization_delay(chunk_size, last_bpns);
+
+    const auto chunk_arrival_time = current_time + latency + serialization_time;
+    const auto link_free_time = chunk_arrival_time;
+
+    if (chunk->src_device_id == 0){
+        auto cnt = 1;
+    }
+
     auto* const chunk_ptr = static_cast<void*>(chunk.release());
     Link::event_queue->schedule_event(chunk_arrival_time, Chunk::chunk_arrived_next_device, chunk_ptr);
 
-    // schedule link free time
-    const auto serialization_time = serialization_delay(chunk_size);
-    const auto link_free_time = current_time + serialization_time;
     auto* const link_ptr = static_cast<void*>(this);
     Link::event_queue->schedule_event(link_free_time, link_become_free, link_ptr);
 }

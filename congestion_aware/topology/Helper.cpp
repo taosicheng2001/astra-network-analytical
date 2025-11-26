@@ -56,6 +56,12 @@ std::shared_ptr<Topology> NetworkAnalyticalCongestionAware::construct_topology(
 
     const auto multi_dim_topology = std::make_shared<MultiDimTopology>();
 
+    multi_dim_topology->real_swtich_count = npus_counts_per_dim[dims_count-1];
+    multi_dim_topology->npu_counts = 1;
+    for (auto dim = 0; dim < dims_count; dim++) {
+        multi_dim_topology->npu_counts *= npus_counts_per_dim[dim];
+    }
+
     auto current_device_count = 0;
     for (auto dim = 0; dim < dims_count; dim++) {
 

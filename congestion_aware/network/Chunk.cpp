@@ -7,6 +7,7 @@ LICENSE file in the root directory of this source tree.
 #include "congestion_aware/Device.h"
 #include "congestion_aware/Link.h"
 #include <cassert>
+#include <iostream>
 
 using namespace NetworkAnalyticalCongestionAware;
 
@@ -15,6 +16,7 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
 
     // cast to unique_ptr<Chunk>
     auto chunk = std::unique_ptr<Chunk>(static_cast<Chunk*>(chunk_ptr));
+    assert(chunk != nullptr);
 
     // mark chunk arrived next node
     chunk->mark_arrived_next_device();
@@ -22,6 +24,8 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     if (chunk->arrived_dest()) {
         // chunk arrived dest, invoke callback
         // as chunk is unique_ptr, will be destroyed automatically
+        chunk->arrival_time = Link::event_queue->get_current_time();
+        chunk->dump_info();
         chunk->invoke_callback();
     } else {
         // send this chunk to next dest
@@ -30,14 +34,23 @@ void Chunk::chunk_arrived_next_device(void* const chunk_ptr) noexcept {
     }
 }
 
-Chunk::Chunk(const ChunkSize chunk_size, Route route, const Callback callback, const CallbackArg callback_arg) noexcept
+Chunk::Chunk(const ChunkSize chunk_size, int chunk_id, Route route, const Callback callback, const CallbackArg callback_arg) noexcept
     : chunk_size(chunk_size),
+      chunk_id(chunk_id),
       route(std::move(route)),
       callback(callback),
       callback_arg(callback_arg) {
     assert(chunk_size > 0);
     assert(!this->route.empty());
     assert(callback != nullptr);
+    sent_time = Link::event_queue->get_current_time();
+    arrival_time = 0;
+    src_device_id = this->route.front()->get_id();
+    dst_device_id = this->route.back()->get_id();
+    stall_count = 0;
+    stall_times = 0;
+    stall_time_begin = 0;
+    last_bpns = 1e31;
 }
 
 std::shared_ptr<Device> Chunk::current_device() const noexcept {
@@ -73,6 +86,12 @@ bool Chunk::arrived_dest() const noexcept {
     return route.size() == 1;
 }
 
+bool Chunk::at_src() const noexcept {
+    if(route.empty())
+        return false;
+    return route.front()->get_id() == src_device_id;    
+}
+
 ChunkSize Chunk::get_size() const noexcept {
     assert(chunk_size > 0);
 
@@ -83,4 +102,12 @@ ChunkSize Chunk::get_size() const noexcept {
 void Chunk::invoke_callback() noexcept {
     // invoke callback
     (*callback)(callback_arg);
+}
+
+void Chunk::dump_info() noexcept {
+    if (eventTrackerFileStream && eventTrackerFileStream.is_open()) {
+        eventTrackerFileStream << src_device_id << " " << dst_device_id << " " 
+        << sent_time << " " << arrival_time << " " << stall_count << " " 
+        << stall_times << " " << chunk_size << std::endl;
+    }
 }
